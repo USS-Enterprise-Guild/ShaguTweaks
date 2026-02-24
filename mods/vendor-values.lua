@@ -12,6 +12,7 @@ local module = ShaguTweaks:register({
   enabled = true,
 })
 
+module.enable = function(self)
 local data = {
   [25]=7, [35]=9, [36]=7, [37]=7, [38]=1, [39]=1,
   [40]=1, [41]=1, [42]=1, [43]=1, [44]=1, [45]=1,
@@ -3877,7 +3878,6 @@ local function AddVendorPrices(frame, id, count)
   end
 end
 
-module.enable = function(self)
   local tooltip = CreateFrame("Frame", nil, GameTooltip)
 
   tooltip:SetScript("OnHide", function()
