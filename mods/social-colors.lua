@@ -33,7 +33,7 @@ module.enable = function(self)
       if _G["ChatFrame"..i] and not _G["ChatFrame"..i].HookAddMessageColor and not Prat and isCombat < 5 then
         _G["ChatFrame"..i].HookAddMessageColor = _G["ChatFrame"..i].AddMessage
         _G["ChatFrame"..i].AddMessage = function(frame, text, a1, a2, a3, a4, a5)
-          if text then
+          if text and string.find(text, "|Hplayer:", 1, true) then
             for name in gfind(text, "|Hplayer:(.-)|h") do
               local real, _ = strsplit(":", name)
               local color = "|cffaaaaaa"
