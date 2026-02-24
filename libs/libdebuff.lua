@@ -133,6 +133,7 @@ libdebuff:RegisterEvent("CHAT_MSG_SPELL_PERIODIC_CREATURE_DAMAGE")
 libdebuff:RegisterEvent("CHAT_MSG_SPELL_FAILED_LOCALPLAYER")
 libdebuff:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
 libdebuff:RegisterEvent("PLAYER_TARGET_CHANGED")
+libdebuff:RegisterEvent("PLAYER_ENTERING_WORLD")
 libdebuff:RegisterEvent("SPELLCAST_STOP")
 libdebuff:RegisterEvent("UNIT_AURA")
 
@@ -152,6 +153,28 @@ libdebuff.pending = {}
 
 -- Gather Data by Events
 libdebuff:SetScript("OnEvent", function()
+  -- prune expired debuff entries on zone change
+  if event == "PLAYER_ENTERING_WORLD" then
+    local now = GetTime()
+    for unit, levels in pairs(libdebuff.objects) do
+      for level, effects in pairs(levels) do
+        local remove
+        for effect, data in pairs(effects) do
+          if data.start and data.duration and data.start + data.duration < now then
+            remove = remove or {}
+            remove[effect] = true
+          end
+        end
+        if remove then
+          for effect in pairs(remove) do
+            effects[effect] = nil
+          end
+        end
+      end
+    end
+    return
+  end
+
   -- paladin seal refresh
   if event == "CHAT_MSG_COMBAT_SELF_HITS" then
     local hit = cmatch(arg1, COMBATHITSELFOTHER)
