@@ -112,29 +112,34 @@ module.enable = function(self)
         castbar.texture.icon:Hide()
       end
 
-      castbar:ClearAllPoints()
-      castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -4)
+      -- throttle repositioning check (~10fps is sufficient)
+      if not this.reposTick or this.reposTick <= GetTime() then
+        this.reposTick = GetTime() + .1
 
-      local targetOfTarget = TargetofTargetFrame and TargetofTargetFrame:IsShown()
-      local debuff11 = TargetFrameDebuff11 and TargetFrameDebuff11:IsShown()
-      local debuff7 = TargetFrameDebuff7 and TargetFrameDebuff7:IsShown()
-      local buff1 = TargetFrameBuff1 and TargetFrameBuff1:IsShown()
-
-      if targetOfTarget then
         castbar:ClearAllPoints()
-        castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -24)
-        if debuff11 then
-          castbar:ClearAllPoints()
-          castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -45)
-          if buff1 then
-              castbar:ClearAllPoints()
-              castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -65)
-          end
-        end
-      else
-        if debuff7 then
+        castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -4)
+
+        local targetOfTarget = TargetofTargetFrame and TargetofTargetFrame:IsShown()
+        local debuff11 = TargetFrameDebuff11 and TargetFrameDebuff11:IsShown()
+        local debuff7 = TargetFrameDebuff7 and TargetFrameDebuff7:IsShown()
+        local buff1 = TargetFrameBuff1 and TargetFrameBuff1:IsShown()
+
+        if targetOfTarget then
           castbar:ClearAllPoints()
           castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -24)
+          if debuff11 then
+            castbar:ClearAllPoints()
+            castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -45)
+            if buff1 then
+                castbar:ClearAllPoints()
+                castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -65)
+            end
+          end
+        else
+          if debuff7 then
+            castbar:ClearAllPoints()
+            castbar:SetPoint("BOTTOM", TargetFrame, "BOTTOM", -12, -24)
+          end
         end
       end
     else
