@@ -24,6 +24,24 @@ libhealth:SetScript("OnEvent", function()
     libhealth.enabled = true
     libhealth.reqhit = 2
     libhealth.reqdmg = 10
+
+    -- prune health cache if too large (keep top 1500 by hit count)
+    local count = 0
+    for _ in pairs(mobdb) do count = count + 1 end
+    if count > 2000 then
+      local entries = {}
+      for key, data in pairs(mobdb) do
+        table.insert(entries, { key = key, hits = data[3] or 0 })
+      end
+      table.sort(entries, function(a, b) return a.hits > b.hits end)
+      local keep = {}
+      for i = 1, 1500 do
+        if entries[i] then keep[entries[i].key] = true end
+      end
+      for key in pairs(mobdb) do
+        if not keep[key] then mobdb[key] = nil end
+      end
+    end
   end
 
   -- return as we're not supposed to be here

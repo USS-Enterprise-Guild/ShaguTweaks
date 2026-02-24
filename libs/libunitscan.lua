@@ -51,6 +51,19 @@ libunitscan:SetScript("OnEvent", function()
     local level = UnitLevel("player")
     AddData("players", name, class, level)
 
+    -- prune player cache if too large
+    local count = 0
+    for _ in pairs(units.players) do count = count + 1 end
+    if count > 3000 then
+      for pname, data in pairs(units.players) do
+        if not data.class then
+          units.players[pname] = nil
+          count = count - 1
+          if count <= 2000 then break end
+        end
+      end
+    end
+
   elseif event == "FRIENDLIST_UPDATE" then
     local name, class, level
     for i = 1, GetNumFriends() do
