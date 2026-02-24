@@ -39,6 +39,10 @@ module.enable = function(self)
       WorldMapButton.player.text:SetJustifyH("RIGHT")
 
       WorldMapButton.coords:SetScript("OnUpdate", function()
+        if not this.tick then this.tick = GetTime() + .2 end
+        if this.tick > GetTime() then return end
+        this.tick = GetTime() + .2
+
         local width  = WorldMapButton:GetWidth()
         local height = WorldMapButton:GetHeight()
         local mx, my = WorldMapButton:GetCenter()

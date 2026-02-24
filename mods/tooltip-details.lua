@@ -144,6 +144,10 @@ module.enable = function(self)
 
   -- update texts
   statusbar:SetScript("OnUpdate", function()
+    if not this.tick then this.tick = GetTime() + .1 end
+    if this.tick > GetTime() then return end
+    this.tick = GetTime() + .1
+
     local hp = GameTooltipStatusBar:GetValue()
     local _, hpmax = GameTooltipStatusBar:GetMinMaxValues()
     local rhp, rhpmax, estimated

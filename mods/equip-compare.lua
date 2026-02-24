@@ -204,6 +204,10 @@ module.enable = function(self)
   -- show item compare on default tooltips
   local default = CreateFrame("Frame", nil, GameTooltip)
   default:SetScript("OnUpdate", function()
+    if not this.tick then this.tick = GetTime() + .2 end
+    if this.tick > GetTime() then return end
+    this.tick = GetTime() + .2
+
     ShowCompare(GameTooltip)
   end)
 
@@ -211,6 +215,10 @@ module.enable = function(self)
   ShaguTweaks.HookAddonOrVariable("AtlasLoot", function()
     local atlas = CreateFrame("Frame", nil, AtlasLootTooltip)
     atlas:SetScript("OnUpdate", function()
+      if not this.tick then this.tick = GetTime() + .2 end
+      if this.tick > GetTime() then return end
+      this.tick = GetTime() + .2
+
       ShowCompare(AtlasLootTooltip)
       ShowCompare(AtlasLootTooltip2)
     end)
