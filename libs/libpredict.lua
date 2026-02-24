@@ -42,8 +42,16 @@ end)
 
 libpredict:SetScript("OnUpdate", function()
   -- update on timeout events
+  local now = GetTime()
+  local remove
   for timestamp, targets in pairs(events) do
-    if GetTime() >= timestamp then
+    if now >= timestamp then
+      remove = remove or {}
+      remove[timestamp] = true
+    end
+  end
+  if remove then
+    for timestamp in pairs(remove) do
       events[timestamp] = nil
     end
   end
@@ -162,8 +170,15 @@ end
 
 function libpredict:HealStop(sender)
   for ttarget, t in pairs(heals) do
+    local remove
     for tsender in pairs(heals[ttarget]) do
       if sender == tsender then
+        remove = remove or {}
+        remove[tsender] = true
+      end
+    end
+    if remove then
+      for tsender in pairs(remove) do
         heals[ttarget][tsender] = nil
       end
     end
@@ -189,8 +204,15 @@ end
 
 function libpredict:RessStop(sender)
   for ttarget, t in pairs(ress) do
+    local remove
     for tsender in pairs(ress[ttarget]) do
       if sender == tsender then
+        remove = remove or {}
+        remove[tsender] = true
+      end
+    end
+    if remove then
+      for tsender in pairs(remove) do
         ress[ttarget][tsender] = nil
       end
     end
@@ -206,11 +228,19 @@ function libpredict:UnitGetIncomingHeals(unit)
   if not heals[name] then
     return sumheal
   else
+    local now = GetTime()
+    local remove
     for sender, amount in pairs(heals[name]) do
-      if amount[2] <= GetTime() then
-        heals[name][sender] = nil
+      if amount[2] <= now then
+        remove = remove or {}
+        remove[sender] = true
       else
         sumheal = sumheal + amount[1]
+      end
+    end
+    if remove then
+      for sender in pairs(remove) do
+        heals[name][sender] = nil
       end
     end
   end
