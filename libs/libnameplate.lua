@@ -29,6 +29,10 @@ ShaguTweaks.libnameplate.OnInit = {}
 ShaguTweaks.libnameplate.OnShow = {}
 ShaguTweaks.libnameplate.OnUpdate = {}
 ShaguTweaks.libnameplate:SetScript("OnUpdate", function()
+  if not this.tick then this.tick = GetTime() + .2 end
+  if this.tick > GetTime() then return end
+  this.tick = GetTime() + .2
+
   parentcount = WorldFrame:GetNumChildren()
   if initialized < parentcount then
     childs = { WorldFrame:GetChildren() }
@@ -37,23 +41,26 @@ ShaguTweaks.libnameplate:SetScript("OnUpdate", function()
 
       if IsNamePlate(plate) and not registry[plate] then
         plate.healthbar = plate:GetChildren()
-        for i, object in pairs({plate:GetRegions()}) do
+        local regions = {plate:GetRegions()}
+        for i = 1, table.getn(regions) do
           if plate and NAMEPLATE_OBJECTORDER[i] then
-            plate[NAMEPLATE_OBJECTORDER[i]] = object
+            plate[NAMEPLATE_OBJECTORDER[i]] = regions[i]
           end
         end
 
         -- run OnInit functions
-        for id, func in pairs(ShaguTweaks.libnameplate.OnInit) do
-          func(plate)
+        local onInits = ShaguTweaks.libnameplate.OnInit
+        for i = 1, table.getn(onInits) do
+          onInits[i](plate)
         end
 
         -- register OnUpdate functions
         local oldUpdate = plate:GetScript("OnUpdate")
         plate:SetScript("OnUpdate", function(self, elapsed)
           if oldUpdate then oldUpdate(self, elapsed) end
-          for id, func in pairs(ShaguTweaks.libnameplate.OnUpdate) do
-            func(self, elapsed)
+          local onUpdates = ShaguTweaks.libnameplate.OnUpdate
+          for i = 1, table.getn(onUpdates) do
+            onUpdates[i](self, elapsed)
           end
         end)
 
@@ -61,8 +68,9 @@ ShaguTweaks.libnameplate:SetScript("OnUpdate", function()
         local oldShow = plate:GetScript("OnShow")
         plate:SetScript("OnShow", function(self)
           if oldShow then oldShow(self) end
-          for id, func in pairs(ShaguTweaks.libnameplate.OnShow) do
-            func(self)
+          local onShows = ShaguTweaks.libnameplate.OnShow
+          for i = 1, table.getn(onShows) do
+            onShows[i](self)
           end
         end)
 
